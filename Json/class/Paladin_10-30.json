@@ -1,0 +1,281 @@
+{
+  "ClassName": "Paladin",
+  "ProfileName": "Paladin_10-30",
+  "Notes": [
+    "F1 - Devotion Aura",
+    "F2 - Blessing of Might (fallback to Blessing of Wisdom when macro detects low mana)",
+    "4 - Seal of Righteousness / Seal of Wisdom",
+    "1 - Judgement",
+    "5 - Divine Protection (bubble)",
+    "F5 - Approach / Interact (optional movement assist)",
+    "7 - Hammer of Justice",
+    "6 - Flash of Light",
+    "3 - Holy Light",
+    "F8 - Lay on Hands",
+    "F9 - Mana gate check (no cast, optional macro)",
+    "F10 - Auto-attack keepalive",
+    "F11 - StopAttack for anti-stuck",
+    "F6 - Jump nudge for anti-stuck",
+    "F7 - TurnLeft pulse for anti-stuck",
+    "F3 - InteractWithTarget for anti-stuck",
+    "= - Drink",
+    "- - Eat"
+  ],
+  "PathFilename": "10_TheBarrens_Safe.json",
+  "SpiritPathFilename": "10_TheBarrens_Safe.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+  "IntVariables": {
+    "FAILED_PULLS": 0
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Prebuff Aura",
+        "Key": "F1",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Devotion Aura",
+          "!InCombat"
+        ],
+        "Cooldown": 2000
+      },
+      {
+        "Name": "Prebuff Blessing",
+        "Key": "F2",
+        "WhenUsable": true,
+        "Requirements": [
+          "(!Blessing of Might && Mana% >= 40) || (!Blessing of Wisdom && Mana% < 40)",
+          "!InCombat"
+        ],
+        "Cooldown": 2000
+      },
+      {
+        "Name": "Check Mana Gate",
+        "Key": "F9",
+        "WhenUsable": true,
+        "Requirements": [
+          "Mana% >= 50",
+          "!InCombat"
+        ],
+        "Cooldown": 500
+      },
+      {
+        "Name": "Seal Prep",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirements": [
+          "(!Seal of Righteousness && Mana% >= 35) || (!Seal of Wisdom && Mana% < 35)",
+          "!InCombat"
+        ],
+        "Cooldown": 500
+      },
+      {
+        "Name": "Approach",
+        "Key": "F5",
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:0 == false",
+          "MobCount <= 1",
+          "!BlacklistTarget",
+          "!InCombat"
+        ],
+        "Cooldown": 500
+      },
+      {
+        "Name": "Judgement Pull",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:0",
+          "MobCount <= 1",
+          "!BlacklistTarget",
+          "Mana% >= 50",
+          "!InCombat"
+        ],
+        "Cooldown": 1000,
+        "ResetOnNewTarget": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Panic Lay on Hands",
+        "Key": "F8",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 15",
+          "!Divine Protection",
+          "!Blessing of Protection"
+        ],
+        "Cooldown": 1800000
+      },
+      {
+        "Name": "Emergency Bubble",
+        "Key": "5",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 25",
+          "!Blessing of Protection"
+        ],
+        "Cooldown": 300000
+      },
+      {
+        "Name": "HoJ Interrupt",
+        "Key": "7",
+        "WhenUsable": true,
+        "Requirements": [
+          "TargetCastingSpell || Health% < 35"
+        ],
+        "Cooldown": 60000
+      },
+      {
+        "Name": "Flash of Light <60%",
+        "Key": "6",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Level >= 20",
+          "Health% < 60",
+          "MobCount < 2"
+        ],
+        "Cooldown": 6000
+      },
+      {
+        "Name": "Holy Light <60%",
+        "Key": "3",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Level < 20",
+          "Health% < 60",
+          "MobCount < 2"
+        ],
+        "Cooldown": 2500
+      },
+      {
+        "Name": "Re-Seal (Wisdom if low mana)",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirements": [
+          "(!Seal of Wisdom && Mana% < 35) || (!Seal of Righteousness && Mana% >= 35)"
+        ],
+        "Cooldown": 500,
+        "ResetOnNewTarget": true
+      },
+      {
+        "Name": "Judgement ST",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:0",
+          "TargetHealth% > 20",
+          "CD_Judgement <= GCD"
+        ],
+        "Cooldown": 1500
+      },
+      {
+        "Name": "AutoAttack KeepAlive",
+        "Key": "F10",
+        "WhenUsable": true,
+        "Requirements": [
+          "InCombat"
+        ],
+        "Cooldown": 500
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Drink OOC",
+        "Key": "=",
+        "WhenUsable": true,
+        "Requirements": [
+          "Mana% < 70",
+          "!InCombat"
+        ],
+        "Cooldown": 5000
+      },
+      {
+        "Name": "Eat OOC",
+        "Key": "-",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 70",
+          "!InCombat"
+        ],
+        "Cooldown": 5000
+      },
+      {
+        "Name": "Unstuck StopAttack",
+        "Key": "F11",
+        "WhenUsable": true,
+        "Requirements": [
+          "(StuckForMs > 3000 || LastMainHandMs > 3500)",
+          "InCombat"
+        ],
+        "Cooldown": 4000,
+        "DelayAfterCast": 200
+      },
+      {
+        "Name": "Unstuck Jump",
+        "Key": "F6",
+        "WhenUsable": true,
+        "Requirements": [
+          "(StuckForMs > 3000 || LastMainHandMs > 3500)",
+          "InCombat"
+        ],
+        "Cooldown": 4000,
+        "DelayAfterCast": 100
+      },
+      {
+        "Name": "Unstuck TurnLeft",
+        "Key": "F7",
+        "WhenUsable": true,
+        "Requirements": [
+          "(StuckForMs > 3000 || LastMainHandMs > 3500)",
+          "InCombat"
+        ],
+        "Cooldown": 4000,
+        "DelayAfterCast": 150
+      },
+      {
+        "Name": "Unstuck Interact",
+        "Key": "F3",
+        "WhenUsable": true,
+        "Requirements": [
+          "(StuckForMs > 3000 || LastMainHandMs > 3500)",
+          "InCombat"
+        ],
+        "Cooldown": 4000,
+        "DelayAfterCast": 150
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "WhenUsable": true,
+        "Requirements": [
+          "Items Broken"
+        ],
+        "PathFilename": "Vendor_Shortpath.json",
+        "Cooldown": 10000
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "WhenUsable": true,
+        "Requirements": [
+          "BagCount > 80"
+        ],
+        "PathFilename": "Vendor_Shortpath.json",
+        "Cooldown": 10000
+      }
+    ]
+  }
+}
